@@ -1,15 +1,14 @@
-from distutils.core import setup
-from distutils.extension import Extension
+import setuptools
 from Cython.Build import cythonize
 
-examples_extension = Extension(
+examples_extension = setuptools.Extension(
     name="pyexamples",
     sources=["pyexamples.pyx"],
     libraries=["examples"],
     library_dirs=["lib"],
     include_dirs=["lib"]
 )
-setup(
+setuptools.setup(
     name="pyexamples",
     ext_modules=cythonize([examples_extension])
 )
