@@ -38,6 +38,6 @@ struct VDecoder* decoder_alloc();
 void decoder_free(struct VDecoder* d);
 int decode(struct VDecoder* d, long size, uint8_t *data);
 
-int decode_rgb(struct VDecoder* d);
+uint8_t *decode_rgb(struct VDecoder* d);
 
 #endif // _VIDEO_DECODER_H_

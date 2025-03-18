@@ -1,6 +1,7 @@
 #cython: language_level=3
 
-from libc.stdint cimport uintptr_t
+import numpy as np
+import cv2
 
 # https://cython.readthedocs.io/en/latest/src/userguide/external_C_code.html
 
@@ -11,7 +12,7 @@ cdef extern from "video_decoder.h":
     int decoder_init(VDecoder* d)
     void decoder_free(VDecoder* d)
     int decode(VDecoder* d, long size, uint8_t *data)
-    int decode_rgb(VDecoder* d)
+    uint8_t *decode_rgb(VDecoder* d)
 
 cdef class VideoDecoder:
     cdef VDecoder d
@@ -25,8 +26,10 @@ cdef class VideoDecoder:
     def decode(self, nalu: bytes) -> int:
         return decode(&self.d, len(nalu), nalu)
 
-    def rgb(self) -> int:
-        # TODO: return rgb bytes
-        return decode_rgb(&self.d)
+    def rgb(self) -> bytes:
+        frame = decode_rgb(&self.d)
 
+        print("frame {}".format(len(frame)))
+        np_array = np.frombuffer(frame, np.uint8)
+        return cv2.imdecode(np_array, cv2.IMREAD_UNCHANGED)
 
