@@ -11,38 +11,33 @@
 #include <libavutil/imgutils.h>
 
 
-struct VDecoder* decoder_alloc() {
-    struct VDecoder d;
-    struct VDecoder* dp;
-
-    dp = &d;
-
+int decoder_init(struct VDecoder* d) {
     const AVCodec *codec;
 
     codec = avcodec_find_decoder(AV_CODEC_ID_H264);
     if (!codec) {
         fprintf(stderr, "Codec not found\n");
-        return NULL;
+        return -1;
     }
 
-    d.c = avcodec_alloc_context3(codec);
-    if (!d.c) {
+    d->c = avcodec_alloc_context3(codec);
+    if (!d->c) {
         fprintf(stderr, "Could not allocate video codec context\n");
-        return NULL;
+        return -1;
     }
 
-    if (avcodec_open2(d.c, codec, NULL) < 0) {
+    if (avcodec_open2(d->c, codec, NULL) < 0) {
         fprintf(stderr, "Could not open codec\n");
-        return NULL;
+        return -1;
     }
 
-    d.frame = av_frame_alloc();
-    if (!d.frame) {
+    d->frame = av_frame_alloc();
+    if (!d->frame) {
         fprintf(stderr, "Could not allocate video frame\n");
-        return NULL;
+        return -1;
     }
 
-    return dp;
+    return 0;
 }
 void decoder_free(struct VDecoder* d) {
     AVCodecContext* c;
